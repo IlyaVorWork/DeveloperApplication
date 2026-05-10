@@ -1,0 +1,16 @@
+---
+gin:
+  - name: developer_application
+    port: 8080
+    enabled: true
+    sw:
+      enabled: true
+postgres:
+  - name: developer_application_postgres
+    enabled: true
+    addr: "postgres:5432"
+    user: root
+    pass: root
+    database:
+      - name: developer_application
+        autoCreate: true

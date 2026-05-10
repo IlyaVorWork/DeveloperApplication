@@ -1,0 +1,4 @@
+.claude
+internal/adapters/repository/postgres/developer_application
+internal/adapters/grpc/application_service/gen
+internal/adapters/grpc/auto_verification/gen

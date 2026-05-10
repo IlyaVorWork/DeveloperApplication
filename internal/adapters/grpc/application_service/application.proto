@@ -1,0 +1,710 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package application;
+
+option go_package = "applications/";
+
+enum RequestStatus {
+  Fail = 0;
+  Success = 1;
+}
+
+message Application {
+  string ID = 1;
+  string DeveloperID = 2;
+  int64 StatusID = 3;
+  string CodeName = 4;
+  int64 CategoryID = 5;
+  string WebVideo = 6;
+  string InappVideo = 7;
+  string WebBackgroundImage = 8;
+  string InappBackgroundImage = 9;
+  string DefaultLocale = 10;
+  google.protobuf.Timestamp CreatedAt = 11;
+  google.protobuf.Timestamp UpdatedAt = 12;
+}
+
+message ApplicationTranslation {
+  string ID = 1;
+  string ApplicationID = 2;
+  string Locale = 3;
+  string Name = 4;
+  string Goals = 5;
+  string Tasks = 6;
+  optional string Challenges = 7;
+  optional string Results = 8;
+  string ShortTitle = 9;
+  optional string Description = 10;
+  optional string Location = 11;
+  google.protobuf.Timestamp CreatedAt = 12;
+  google.protobuf.Timestamp UpdatedAt = 13;
+}
+
+message Category {
+  int64 ID = 1;
+  string BackgroundImage = 2;
+  string IconImage = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  google.protobuf.Timestamp UpdatedAt = 5;
+}
+
+message CategoryTranslation {
+  string ID = 1;
+  int64 CategoryID = 2;
+  string Locale = 3;
+  string Title = 4;
+  string Subtitle = 5;
+  string ShortDescription = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  google.protobuf.Timestamp UpdatedAt = 8;
+}
+
+message Status {
+  int64 ID = 1;
+}
+
+message StatusTranslation {
+  string ID = 1;
+  int64 StatusID = 2;
+  string Locale = 3;
+  string Title = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  google.protobuf.Timestamp UpdatedAt = 6;
+}
+
+message Repository {
+  string ID = 1;
+  string ApplicationID = 2;
+  int32 DeviceTypeID = 3;
+  int32 MajorVersion = 4;
+  int32 MinorVersion = 5;
+  int32 MicroVersion = 6;
+  string BuildTypeID = 7;
+  string LaunchUrl = 8;
+  optional string RepositoryUrl = 9;
+  google.protobuf.Timestamp CreatedAt = 10;
+  google.protobuf.Timestamp UpdatedAt = 11;
+}
+
+message EventLog {
+  string ID = 1;
+  string ApplicationID = 2;
+  int32 EventType = 3;
+  string OldValue = 4;
+  string NewValue = 5;
+  string Initiator = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+}
+
+message DeveloperMetadata {
+  string ID = 1;
+  string ApplicationID = 2;
+  string Key = 3;
+  string Value = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  google.protobuf.Timestamp UpdatedAt = 6;
+}
+
+message Tool {
+  string ID = 1;
+  google.protobuf.Timestamp CreatedAt = 2;
+}
+
+message ToolTranslation {
+  string ID = 1;
+  string ToolID = 2;
+  string Locale = 3;
+  string Name = 4;
+}
+
+service ApplicationService {
+  // Application CRUD
+
+  rpc GetApplications (GetApplicationsRequest) returns (GetApplicationsResponse);
+  rpc GetApplication (GetApplicationRequest) returns (GetApplicationResponse);
+  rpc CreateApplication (CreateApplicationRequest) returns (CreateApplicationResponse);
+  rpc UpdateApplication (UpdateApplicationRequest) returns (UpdateApplicationResponse);
+  rpc DeleteApplication (DeleteApplicationRequest) returns (DeleteApplicationResponse);
+
+  // Application Translation CRUD
+
+  rpc GetApplicationTranslation (GetApplicationTranslationRequest) returns (GetApplicationTranslationResponse);
+  rpc GetApplicationTranslations (GetApplicationTranslationsRequest) returns (GetApplicationTranslationsResponse);
+  rpc CreateApplicationTranslation (CreateApplicationTranslationRequest) returns (CreateApplicationTranslationResponse);
+  rpc UpdateApplicationTranslation (UpdateApplicationTranslationRequest) returns (UpdateApplicationTranslationResponse);
+  rpc DeleteApplicationTranslation (DeleteApplicationTranslationRequest) returns (DeleteApplicationTranslationResponse);
+
+  // Category CRUD
+
+  rpc GetCategories (GetCategoriesRequest) returns (GetCategoriesResponse);
+  rpc GetCategory (GetCategoryRequest) returns (GetCategoryResponse);
+  rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse);
+  rpc UpdateCategory (UpdateCategoryRequest) returns (UpdateCategoryResponse);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse);
+
+  // Category Translation CRUD
+
+  rpc GetCategoryTranslation (GetCategoryTranslationRequest) returns (GetCategoryTranslationResponse);
+  rpc GetCategoryTranslations (GetCategoryTranslationsRequest) returns (GetCategoryTranslationsResponse);
+  rpc CreateCategoryTranslation (CreateCategoryTranslationRequest) returns (CreateCategoryTranslationResponse);
+  rpc UpdateCategoryTranslation (UpdateCategoryTranslationRequest) returns (UpdateCategoryTranslationResponse);
+  rpc DeleteCategoryTranslation (DeleteCategoryTranslationRequest) returns (DeleteCategoryTranslationResponse);
+
+  // Status CRUD (Read only)
+
+  rpc GetStatuses (GetStatusesRequest) returns (GetStatusesResponse);
+
+  // Status Translation CRUD
+
+  rpc GetStatusTranslation (GetStatusTranslationRequest) returns (GetStatusTranslationResponse);
+  rpc GetStatusTranslations (GetStatusTranslationsRequest) returns (GetStatusTranslationsResponse);
+  rpc CreateStatusTranslation (CreateStatusTranslationRequest) returns (CreateStatusTranslationResponse);
+  rpc UpdateStatusTranslation (UpdateStatusTranslationRequest) returns (UpdateStatusTranslationResponse);
+  rpc DeleteStatusTranslation (DeleteStatusTranslationRequest) returns (DeleteStatusTranslationResponse);
+
+  // Repository CRUD
+
+  rpc GetRepositories (GetRepositoriesRequest) returns (GetRepositoriesResponse);
+  rpc GetRepository (GetRepositoryRequest) returns (GetRepositoryResponse);
+  rpc CreateRepository (CreateRepositoryRequest) returns (CreateRepositoryResponse);
+  rpc UpdateRepository (UpdateRepositoryRequest) returns (UpdateRepositoryResponse);
+  rpc DeleteRepository (DeleteRepositoryRequest) returns (DeleteRepositoryResponse);
+
+  // Developer Metadata CRUD
+
+  rpc GetDeveloperMetadata (GetDeveloperMetadataRequest) returns (GetDeveloperMetadataResponse);
+  rpc GetDeveloperMetadataItem (GetDeveloperMetadataItemRequest) returns (GetDeveloperMetadataItemResponse);
+  rpc CreateDeveloperMetadata (CreateDeveloperMetadataRequest) returns (CreateDeveloperMetadataResponse);
+  rpc UpdateDeveloperMetadata (UpdateDeveloperMetadataRequest) returns (UpdateDeveloperMetadataResponse);
+  rpc DeleteDeveloperMetadata (DeleteDeveloperMetadataRequest) returns (DeleteDeveloperMetadataResponse);
+
+  // Tool CRUD
+
+  rpc GetTools (GetToolsRequest) returns (GetToolsResponse);
+  rpc GetToolsByApplicationID (GetToolsByApplicationIDRequest) returns (GetToolsByApplicationIDResponse);
+  rpc CreateTool (CreateToolRequest) returns (CreateToolResponse);
+  rpc DeleteTool (DeleteToolRequest) returns (DeleteToolResponse);
+
+  // Tool Translation CRUD
+
+  rpc GetToolTranslation (GetToolTranslationRequest) returns (GetToolTranslationResponse);
+  rpc GetToolTranslations (GetToolTranslationsRequest) returns (GetToolTranslationsResponse);
+  rpc CreateToolTranslation (CreateToolTranslationRequest) returns (CreateToolTranslationResponse);
+  rpc UpdateToolTranslation (UpdateToolTranslationRequest) returns (UpdateToolTranslationResponse);
+  rpc DeleteToolTranslation (DeleteToolTranslationRequest) returns (DeleteToolTranslationResponse);
+}
+
+// ============================================================================
+// Application CRUD
+// ============================================================================
+
+message GetApplicationsRequest {}
+
+message GetApplicationsResponse {
+  RequestStatus Status = 1;
+  repeated Application Applications = 2;
+}
+
+message GetApplicationRequest {
+  string ApplicationID = 1;
+}
+
+message GetApplicationResponse {
+  RequestStatus Status = 1;
+  Application Application = 2;
+}
+
+message CreateApplicationRequest {
+  string DeveloperID = 1;
+  string CodeName = 2;
+  int64 CategoryID = 3;
+  string WebVideo = 4;
+  string InappVideo = 5;
+  string WebBackgroundImage = 6;
+  string InappBackgroundImage = 7;
+  string DefaultLocale = 8;
+
+  // Initial translation (required)
+  string Name = 9;
+  string Goals = 10;
+  string Tasks = 11;
+  optional string Challenges = 12;
+  optional string Results = 13;
+  string ShortTitle = 14;
+  optional string Description = 15;
+  optional string Location = 16;
+}
+
+message CreateApplicationResponse {
+  RequestStatus Status = 1;
+  string ApplicationID = 2;
+}
+
+message UpdateApplicationRequest {
+  string ApplicationID = 1;
+  optional int64 StatusID = 2;
+  optional string CodeName = 3;
+  optional int64 CategoryID = 4;
+  optional string WebVideo = 5;
+  optional string InappVideo = 6;
+  optional string WebBackgroundImage = 7;
+  optional string InappBackgroundImage = 8;
+  optional string DefaultLocale = 9;
+}
+
+message UpdateApplicationResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteApplicationRequest {
+  string ApplicationID = 1;
+}
+
+message DeleteApplicationResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Application Translation CRUD
+// ============================================================================
+
+message GetApplicationTranslationRequest {
+  string ApplicationID = 1;
+  string Locale = 2;
+}
+
+message GetApplicationTranslationResponse {
+  RequestStatus Status = 1;
+  ApplicationTranslation Translation = 2;
+}
+
+message GetApplicationTranslationsRequest {
+  string ApplicationID = 1;
+}
+
+message GetApplicationTranslationsResponse {
+  RequestStatus Status = 1;
+  repeated ApplicationTranslation Translations = 2;
+}
+
+message CreateApplicationTranslationRequest {
+  string ApplicationID = 1;
+  string Locale = 2;
+  string Name = 3;
+  string Goals = 4;
+  string Tasks = 5;
+  optional string Challenges = 6;
+  optional string Results = 7;
+  string ShortTitle = 8;
+  optional string Description = 9;
+  optional string Location = 10;
+}
+
+message CreateApplicationTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message UpdateApplicationTranslationRequest {
+  string ApplicationID = 1;
+  string Locale = 2;
+  optional string Name = 3;
+  optional string Goals = 4;
+  optional string Tasks = 5;
+  optional string Challenges = 6;
+  optional string Results = 7;
+  optional string ShortTitle = 8;
+  optional string Description = 9;
+  optional string Location = 10;
+}
+
+message UpdateApplicationTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteApplicationTranslationRequest {
+  string ApplicationID = 1;
+  string Locale = 2;
+}
+
+message DeleteApplicationTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Category CRUD
+// ============================================================================
+
+message GetCategoriesRequest {}
+
+message GetCategoriesResponse {
+  RequestStatus Status = 1;
+  repeated Category Categories = 2;
+}
+
+message GetCategoryRequest {
+  int64 CategoryID = 1;
+}
+
+message GetCategoryResponse {
+  RequestStatus Status = 1;
+  Category Category = 2;
+}
+
+message CreateCategoryRequest {
+  string BackgroundImage = 1;
+  string IconImage = 2;
+
+  // Initial translation (required)
+  string DefaultLocale = 3;
+  string Title = 4;
+  string Subtitle = 5;
+  string ShortDescription = 6;
+}
+
+message CreateCategoryResponse {
+  RequestStatus Status = 1;
+  int64 CategoryID = 2;
+}
+
+message UpdateCategoryRequest {
+  int64 CategoryID = 1;
+  optional string BackgroundImage = 2;
+  optional string IconImage = 3;
+}
+
+message UpdateCategoryResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteCategoryRequest {
+  int64 CategoryID = 1;
+}
+
+message DeleteCategoryResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Category Translation CRUD
+// ============================================================================
+
+message GetCategoryTranslationRequest {
+  int64 CategoryID = 1;
+  string Locale = 2;
+}
+
+message GetCategoryTranslationResponse {
+  RequestStatus Status = 1;
+  CategoryTranslation Translation = 2;
+}
+
+message GetCategoryTranslationsRequest {
+  int64 CategoryID = 1;
+}
+
+message GetCategoryTranslationsResponse {
+  RequestStatus Status = 1;
+  repeated CategoryTranslation Translations = 2;
+}
+
+message CreateCategoryTranslationRequest {
+  int64 CategoryID = 1;
+  string Locale = 2;
+  string Title = 3;
+  string Subtitle = 4;
+  string ShortDescription = 5;
+}
+
+message CreateCategoryTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message UpdateCategoryTranslationRequest {
+  int64 CategoryID = 1;
+  string Locale = 2;
+  optional string Title = 3;
+  optional string Subtitle = 4;
+  optional string ShortDescription = 5;
+}
+
+message UpdateCategoryTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteCategoryTranslationRequest {
+  int64 CategoryID = 1;
+  string Locale = 2;
+}
+
+message DeleteCategoryTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Status CRUD (Read only)
+// ============================================================================
+
+message GetStatusesRequest {}
+
+message GetStatusesResponse {
+  RequestStatus Status = 1;
+  repeated Status Statuses = 2;
+}
+
+// ============================================================================
+// Status Translation CRUD
+// ============================================================================
+
+message GetStatusTranslationRequest {
+  int64 StatusID = 1;
+  string Locale = 2;
+}
+
+message GetStatusTranslationResponse {
+  RequestStatus Status = 1;
+  StatusTranslation Translation = 2;
+}
+
+message GetStatusTranslationsRequest {
+  int64 StatusID = 1;
+}
+
+message GetStatusTranslationsResponse {
+  RequestStatus Status = 1;
+  repeated StatusTranslation Translations = 2;
+}
+
+message CreateStatusTranslationRequest {
+  int64 StatusID = 1;
+  string Locale = 2;
+  string Title = 3;
+}
+
+message CreateStatusTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message UpdateStatusTranslationRequest {
+  int64 StatusID = 1;
+  string Locale = 2;
+  string Title = 3;
+}
+
+message UpdateStatusTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteStatusTranslationRequest {
+  int64 StatusID = 1;
+  string Locale = 2;
+}
+
+message DeleteStatusTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Repository CRUD
+// ============================================================================
+
+message GetRepositoriesRequest {
+  string ApplicationID = 1;
+}
+
+message GetRepositoriesResponse {
+  RequestStatus Status = 1;
+  repeated Repository Repositories = 2;
+}
+
+message GetRepositoryRequest {
+  string RepositoryID = 1;
+}
+
+message GetRepositoryResponse {
+  RequestStatus Status = 1;
+  Repository Repository = 2;
+}
+
+message CreateRepositoryRequest {
+  string ApplicationID = 1;
+  int32 DeviceTypeID = 2;
+  int32 MajorVersion = 3;
+  int32 MinorVersion = 4;
+  int32 MicroVersion = 5;
+  string BuildTypeID = 6;
+  string LaunchUrl = 7;
+  optional string RepositoryUrl = 8;
+}
+
+message CreateRepositoryResponse {
+  RequestStatus Status = 1;
+  string RepositoryID = 2;
+}
+
+message UpdateRepositoryRequest {
+  string RepositoryID = 1;
+  optional int32 DeviceTypeID = 2;
+  optional int32 MajorVersion = 3;
+  optional int32 MinorVersion = 4;
+  optional int32 MicroVersion = 5;
+  optional string BuildTypeID = 6;
+  optional string LaunchUrl = 7;
+  optional string RepositoryUrl = 8;
+}
+
+message UpdateRepositoryResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteRepositoryRequest {
+  string RepositoryID = 1;
+}
+
+message DeleteRepositoryResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Developer Metadata CRUD
+// ============================================================================
+
+message GetDeveloperMetadataRequest {
+  string ApplicationID = 1;
+}
+
+message GetDeveloperMetadataResponse {
+  RequestStatus Status = 1;
+  repeated DeveloperMetadata Metadata = 2;
+}
+
+message GetDeveloperMetadataItemRequest {
+  string ApplicationID = 1;
+  string Key = 2;
+}
+
+message GetDeveloperMetadataItemResponse {
+  RequestStatus Status = 1;
+  DeveloperMetadata Metadata = 2;
+}
+
+message CreateDeveloperMetadataRequest {
+  string ApplicationID = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message CreateDeveloperMetadataResponse {
+  RequestStatus Status = 1;
+}
+
+message UpdateDeveloperMetadataRequest {
+  string ApplicationID = 1;
+  string Key = 2;
+  string Value = 3;
+}
+
+message UpdateDeveloperMetadataResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteDeveloperMetadataRequest {
+  string ApplicationID = 1;
+  string Key = 2;
+}
+
+message DeleteDeveloperMetadataResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Tool CRUD
+// ============================================================================
+
+message GetToolsRequest {}
+
+message GetToolsResponse {
+  RequestStatus Status = 1;
+  repeated Tool Tools = 2;
+}
+
+message GetToolsByApplicationIDRequest {
+  string ApplicationID = 1;
+}
+
+message GetToolsByApplicationIDResponse {
+  RequestStatus Status = 1;
+  repeated Tool Tools = 2;
+}
+
+message CreateToolRequest {
+  // Initial translation (required)
+  string Locale = 1;
+  string Name = 2;
+}
+
+message CreateToolResponse {
+  RequestStatus Status = 1;
+  string ToolID = 2;
+}
+
+message DeleteToolRequest {
+  string ToolID = 1;
+}
+
+message DeleteToolResponse {
+  RequestStatus Status = 1;
+}
+
+// ============================================================================
+// Tool Translation CRUD
+// ============================================================================
+
+message GetToolTranslationRequest {
+  string ToolID = 1;
+  string Locale = 2;
+}
+
+message GetToolTranslationResponse {
+  RequestStatus Status = 1;
+  ToolTranslation Translation = 2;
+}
+
+message GetToolTranslationsRequest {
+  string ToolID = 1;
+}
+
+message GetToolTranslationsResponse {
+  RequestStatus Status = 1;
+  repeated ToolTranslation Translations = 2;
+}
+
+message CreateToolTranslationRequest {
+  string ToolID = 1;
+  string Locale = 2;
+  string Name = 3;
+}
+
+message CreateToolTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message UpdateToolTranslationRequest {
+  string ToolID = 1;
+  string Locale = 2;
+  string Name = 3;
+}
+
+message UpdateToolTranslationResponse {
+  RequestStatus Status = 1;
+}
+
+message DeleteToolTranslationRequest {
+  string ToolID = 1;
+  string Locale = 2;
+}
+
+message DeleteToolTranslationResponse {
+  RequestStatus Status = 1;
+}

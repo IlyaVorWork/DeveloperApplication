@@ -1,0 +1,6 @@
+version: v1beta1
+name: github.com/rk-dev/rk-boot
+build:
+  roots:
+    - internal/adapters/grpc/application_service
+    - internal/adapters/grpc/auto_verification

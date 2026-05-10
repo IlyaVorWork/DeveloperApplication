@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package auto_verification;
+
+option go_package = "auto_verification/";
+
+message VerificationProcess {
+  string ID = 1;
+  string Status = 2;
+  int64 Version = 3;
+  string StepName = 4;
+  string StepStatus = 5;
+}
+
+service AutoVerificationService {
+  rpc StartVerificationProcess (StartVerificationProcessRequest) returns (StartVerificationProcessResponse);
+  rpc GetVerificationProcess (GetVerificationRequest) returns (GetVerificationResponse);
+}
+
+message StartVerificationProcessRequest {
+  string ApkFileName = 1;
+}
+
+message StartVerificationProcessResponse {
+  string ID = 1;
+}
+
+message GetVerificationRequest {
+  string ProcessID = 1;
+}
+
+message GetVerificationResponse {
+  repeated VerificationProcess process = 1;
+}

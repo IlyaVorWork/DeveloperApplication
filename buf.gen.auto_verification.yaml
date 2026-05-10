@@ -1,0 +1,11 @@
+version: v1beta1
+plugins:
+  - name: go
+    out: internal/adapters/grpc/auto_verification/gen
+    opt:
+      - paths=source_relative
+  - name: go-grpc
+    out: internal/adapters/grpc/auto_verification/gen
+    opt:
+      - paths=source_relative
+      - require_unimplemented_servers=false
