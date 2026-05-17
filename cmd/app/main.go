@@ -18,7 +18,12 @@ import (
 )
 
 func main() {
-	boot := rkboot.NewBoot()
+	raw, err := os.ReadFile("boot.yaml")
+	if err != nil {
+		log.Fatalf("failed to read boot.yaml: %v", err)
+	}
+
+	boot := rkboot.NewBoot(rkboot.WithBootConfigRaw([]byte(os.ExpandEnv(string(raw)))))
 	boot.Bootstrap(context.TODO())
 
 	gin := rkgin.GetGinEntry("developer_application")

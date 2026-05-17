@@ -24,6 +24,7 @@ message Application {
   string DefaultLocale = 10;
   google.protobuf.Timestamp CreatedAt = 11;
   google.protobuf.Timestamp UpdatedAt = 12;
+  optional string VideoCover = 13;
 }
 
 message ApplicationTranslation {
@@ -40,6 +41,7 @@ message ApplicationTranslation {
   optional string Location = 11;
   google.protobuf.Timestamp CreatedAt = 12;
   google.protobuf.Timestamp UpdatedAt = 13;
+  optional string Safety = 14;
 }
 
 message Category {
@@ -225,6 +227,7 @@ message CreateApplicationRequest {
   string WebBackgroundImage = 6;
   string InappBackgroundImage = 7;
   string DefaultLocale = 8;
+  optional string VideoCover = 17;
 
   // Initial translation (required)
   string Name = 9;
@@ -235,6 +238,7 @@ message CreateApplicationRequest {
   string ShortTitle = 14;
   optional string Description = 15;
   optional string Location = 16;
+  optional string Safety = 18;
 }
 
 message CreateApplicationResponse {
@@ -252,6 +256,7 @@ message UpdateApplicationRequest {
   optional string WebBackgroundImage = 7;
   optional string InappBackgroundImage = 8;
   optional string DefaultLocale = 9;
+  optional string VideoCover = 10;
 }
 
 message UpdateApplicationResponse {
@@ -300,6 +305,7 @@ message CreateApplicationTranslationRequest {
   string ShortTitle = 8;
   optional string Description = 9;
   optional string Location = 10;
+  optional string Safety = 11;
 }
 
 message CreateApplicationTranslationResponse {
@@ -317,6 +323,7 @@ message UpdateApplicationTranslationRequest {
   optional string ShortTitle = 8;
   optional string Description = 9;
   optional string Location = 10;
+  optional string Safety = 11;
 }
 
 message UpdateApplicationTranslationResponse {

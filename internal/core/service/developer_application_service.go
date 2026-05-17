@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"io"
+	"strconv"
+	"strings"
 
 	app_client "developerApplication/internal/adapters/grpc/application_service"
 	app_gen "developerApplication/internal/adapters/grpc/application_service/gen"
@@ -14,6 +16,8 @@ import (
 
 	"github.com/google/uuid"
 )
+
+const androidDeviceTypeID = 1
 
 type Service struct {
 	repo       postgres.DeveloperApplicationRepository
@@ -36,15 +40,33 @@ func NewService(
 	}
 }
 
-func (s *Service) UploadBuild(ctx context.Context, developerID, version string, fileName string, reader io.Reader, size int64) (developer_application.DeveloperApplication, error) {
-	if err := s.storage.UploadFile(ctx, fileName, reader, size, "application/vnd.android.package-archive"); err != nil {
+func (s *Service) UploadBuild(ctx context.Context, p UploadBuildParams) (developer_application.DeveloperApplication, error) {
+	if err := s.storage.UploadFile(ctx, p.FileName, p.Reader, p.Size, "application/vnd.android.package-archive"); err != nil {
 		return developer_application.DeveloperApplication{}, fmt.Errorf("upload to storage: %w", err)
 	}
 
 	return s.repo.CreateDeveloperApplication(ctx, developer_application.CreateDeveloperApplicationParams{
-		DeveloperID: uuid.MustParse(developerID),
-		ApkFilename: fileName,
-		Version:     version,
+		DeveloperID:          uuid.MustParse(p.DeveloperID),
+		CodeName:             p.CodeName,
+		CategoryID:           p.CategoryID,
+		AndroidPackageName:   p.AndroidPackageName,
+		DefaultLocale:        p.DefaultLocale,
+		Name:                 p.Name,
+		ShortTitle:           p.ShortTitle,
+		Description:          nullString(p.Description),
+		Goals:                p.Goals,
+		Tasks:                p.Tasks,
+		Results:              nullString(p.Results),
+		Challenges:           nullString(p.Challenges),
+		Location:             nullString(p.Location),
+		VideoCover:           nullString(p.VideoCover),
+		Safety:               nullString(p.Safety),
+		WebVideo:             p.WebVideo,
+		InappVideo:           p.InappVideo,
+		WebBackgroundImage:   p.WebBackgroundImage,
+		InappBackgroundImage: nullString(p.InappBackgroundImage),
+		ApkFilename:          p.FileName,
+		Version:              p.Version,
 	})
 }
 
@@ -78,7 +100,10 @@ func (s *Service) StartVerification(ctx context.Context, id string) (developer_a
 		return developer_application.DeveloperApplication{}, fmt.Errorf("start verification: %w", err)
 	}
 
-	return s.repo.SetVerificationProcess(ctx, app.ID, uuid.MustParse(processID))
+	return s.repo.SetVerificationProcess(ctx, developer_application.SetVerificationProcessParams{
+		ID:                    app.ID,
+		VerificationProcessID: uuid.NullUUID{UUID: uuid.MustParse(processID), Valid: true},
+	})
 }
 
 func (s *Service) GetVerificationStatus(ctx context.Context, id string) (string, error) {
@@ -103,7 +128,7 @@ func (s *Service) GetVerificationStatus(ctx context.Context, id string) (string,
 	return processes[0].Status, nil
 }
 
-func (s *Service) PublishApplication(ctx context.Context, id, developerID, codeName string, categoryID int64) error {
+func (s *Service) PublishApplication(ctx context.Context, id string) error {
 	app, err := s.repo.GetDeveloperApplication(ctx, uuid.MustParse(id))
 	if err != nil {
 		return err
@@ -113,10 +138,30 @@ func (s *Service) PublishApplication(ctx context.Context, id, developerID, codeN
 		return ErrNotVerified
 	}
 
+	major, minor, micro, err := parseVersion(app.Version)
+	if err != nil {
+		return fmt.Errorf("parse version: %w", err)
+	}
+
 	appID, err := s.appService.CreateApplication(ctx, &app_gen.CreateApplicationRequest{
-		DeveloperID: developerID,
-		CodeName:    codeName,
-		CategoryID:  categoryID,
+		DeveloperID:          app.DeveloperID.String(),
+		CodeName:             app.CodeName,
+		CategoryID:           app.CategoryID,
+		DefaultLocale:        app.DefaultLocale,
+		WebVideo:             app.WebVideo,
+		InappVideo:           app.InappVideo,
+		WebBackgroundImage:   app.WebBackgroundImage,
+		InappBackgroundImage: app.InappBackgroundImage.String,
+		VideoCover:           ptrString(app.VideoCover),
+		Name:                 app.Name,
+		ShortTitle:           app.ShortTitle,
+		Goals:                app.Goals,
+		Tasks:                app.Tasks,
+		Description:          ptrString(app.Description),
+		Results:              ptrString(app.Results),
+		Challenges:           ptrString(app.Challenges),
+		Location:             ptrString(app.Location),
+		Safety:               ptrString(app.Safety),
 	})
 	if err != nil {
 		return fmt.Errorf("create application: %w", err)
@@ -124,11 +169,43 @@ func (s *Service) PublishApplication(ctx context.Context, id, developerID, codeN
 
 	_, err = s.appService.CreateRepository(ctx, &app_gen.CreateRepositoryRequest{
 		ApplicationID: appID,
-		LaunchUrl:     app.ApkFilename,
+		DeviceTypeID:  androidDeviceTypeID,
+		MajorVersion:  int32(major),
+		MinorVersion:  int32(minor),
+		MicroVersion:  int32(micro),
+		BuildTypeID:   "release",
+		LaunchUrl:     app.AndroidPackageName,
 	})
 	if err != nil {
 		return fmt.Errorf("create repository: %w", err)
 	}
 
 	return s.repo.MarkAsPublished(ctx, app.ID)
+}
+
+func parseVersion(version string) (int, int, int, error) {
+	parts := strings.Split(version, ".")
+	if len(parts) != 3 {
+		return 0, 0, 0, fmt.Errorf("expected major.minor.micro format, got %q", version)
+	}
+	nums := [3]int{}
+	for i, p := range parts {
+		n, err := strconv.Atoi(p)
+		if err != nil {
+			return 0, 0, 0, fmt.Errorf("invalid version component %q: %w", p, err)
+		}
+		nums[i] = n
+	}
+	return nums[0], nums[1], nums[2], nil
+}
+
+func nullString(s string) sql.NullString {
+	return sql.NullString{String: s, Valid: s != ""}
+}
+
+func ptrString(s sql.NullString) *string {
+	if !s.Valid {
+		return nil
+	}
+	return &s.String
 }

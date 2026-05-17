@@ -8,9 +8,9 @@ gin:
 postgres:
   - name: developer_application_postgres
     enabled: true
-    addr: "postgres:5432"
-    user: root
-    pass: root
+    addr: "${POSTGRES_ADDR}"
+    user: "${POSTGRES_USER}"
+    pass: "${POSTGRES_PASS}"
     database:
-      - name: developer_application
+      - name: "${POSTGRES_DB}"
         autoCreate: true

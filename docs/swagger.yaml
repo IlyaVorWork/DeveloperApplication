@@ -1,0 +1,339 @@
+definitions:
+  rest.ApplicationOutDTO:
+    properties:
+      android_package_name:
+        type: string
+      apk_filename:
+        type: string
+      category_id:
+        type: integer
+      challenges:
+        type: string
+      code_name:
+        type: string
+      created_at:
+        type: string
+      default_locale:
+        type: string
+      description:
+        type: string
+      developer_id:
+        type: string
+      goals:
+        type: string
+      id:
+        type: string
+      inapp_background_image:
+        type: string
+      inapp_video:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+      published:
+        type: boolean
+      results:
+        type: string
+      safety:
+        type: string
+      short_title:
+        type: string
+      tasks:
+        type: string
+      updated_at:
+        type: string
+      verification_process_id:
+        type: string
+      verification_status:
+        type: string
+      version:
+        type: string
+      video_cover:
+        type: string
+      web_background_image:
+        type: string
+      web_video:
+        type: string
+    type: object
+  rest.ErrorResponseDTO:
+    properties:
+      error:
+        type: string
+    type: object
+  rest.ListApplicationsOutDTO:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/rest.ApplicationOutDTO'
+        type: array
+      page:
+        type: integer
+      size:
+        type: integer
+    type: object
+  rest.VerificationStatusOutDTO:
+    properties:
+      status:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /applications:
+    get:
+      parameters:
+      - description: ID разработчика
+        in: query
+        name: developer_id
+        required: true
+        type: string
+      - description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - description: Размер страницы
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ListApplicationsOutDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Список приложений разработчика
+      tags:
+      - applications
+    post:
+      consumes:
+      - multipart/form-data
+      description: Загружает APK-файл и создаёт черновик приложения.
+      parameters:
+      - description: ID разработчика
+        in: formData
+        name: developer_id
+        required: true
+        type: string
+      - description: Кодовое имя
+        in: formData
+        name: code_name
+        required: true
+        type: string
+      - description: ID категории (по умолчанию 0)
+        in: formData
+        name: category_id
+        type: integer
+      - description: Android package name (напр. com.TPU.DIVE_E9)
+        in: formData
+        name: android_package_name
+        required: true
+        type: string
+      - description: Локаль по умолчанию (напр. ru)
+        in: formData
+        name: default_locale
+        required: true
+        type: string
+      - description: Название приложения
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Краткий заголовок
+        in: formData
+        name: short_title
+        required: true
+        type: string
+      - description: Версия (напр. 1.0.0)
+        in: formData
+        name: version
+        required: true
+        type: string
+      - description: Описание
+        in: formData
+        name: description
+        type: string
+      - description: Цели
+        in: formData
+        name: goals
+        type: string
+      - description: Задачи
+        in: formData
+        name: tasks
+        type: string
+      - description: Результаты
+        in: formData
+        name: results
+        type: string
+      - description: Челленджи
+        in: formData
+        name: challenges
+        type: string
+      - description: Местоположение
+        in: formData
+        name: location
+        type: string
+      - description: Обложка видео
+        in: formData
+        name: video_cover
+        type: string
+      - description: Техника безопасности
+        in: formData
+        name: safety
+        type: string
+      - description: Видео для web
+        in: formData
+        name: web_video
+        type: string
+      - description: Видео для in-app
+        in: formData
+        name: inapp_video
+        type: string
+      - description: Фон для web
+        in: formData
+        name: web_background_image
+        type: string
+      - description: Фон для in-app (launcher)
+        in: formData
+        name: inapp_background_image
+        type: string
+      - description: APK-файл
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest.ApplicationOutDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Загрузить сборку
+      tags:
+      - applications
+  /applications/{id}:
+    get:
+      parameters:
+      - description: ID приложения
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApplicationOutDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Получить приложение
+      tags:
+      - applications
+  /applications/{id}/publish:
+    post:
+      parameters:
+      - description: ID приложения
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Опубликовать приложение
+      tags:
+      - applications
+  /applications/{id}/verify:
+    get:
+      parameters:
+      - description: ID приложения
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.VerificationStatusOutDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Статус верификации
+      tags:
+      - applications
+    post:
+      parameters:
+      - description: ID приложения
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.ApplicationOutDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.ErrorResponseDTO'
+      summary: Запустить верификацию
+      tags:
+      - applications
+swagger: "2.0"
