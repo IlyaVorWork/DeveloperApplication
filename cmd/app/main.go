@@ -70,6 +70,7 @@ func main() {
 	gin.Router.POST("/applications", handler.UploadBuild)
 	gin.Router.GET("/applications", handler.ListApplications)
 	gin.Router.GET("/applications/:id", handler.GetApplication)
+	gin.Router.PATCH("/applications/:id", handler.UpdateApplication)
 	gin.Router.POST("/applications/:id/verify", handler.StartVerification)
 	gin.Router.GET("/applications/:id/verify", handler.GetVerificationStatus)
 	gin.Router.POST("/applications/:id/publish", handler.PublishApplication)

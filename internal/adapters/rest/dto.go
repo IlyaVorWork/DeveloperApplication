@@ -28,36 +28,58 @@ type UploadBuildInDTO struct {
 	InappBackgroundImage string `form:"inapp_background_image"`
 }
 
+type UpdateApplicationInDTO struct {
+	CodeName             *string `json:"code_name"`
+	CategoryID           *int64  `json:"category_id"`
+	AndroidPackageName   *string `json:"android_package_name"`
+	DefaultLocale        *string `json:"default_locale"`
+	WebVideo             *string `json:"web_video"`
+	InappVideo           *string `json:"inapp_video"`
+	WebBackgroundImage   *string `json:"web_background_image"`
+	InappBackgroundImage *string `json:"inapp_background_image"`
+	Name                 *string `json:"name"`
+	ShortTitle           *string `json:"short_title"`
+	Description          *string `json:"description"`
+	Goals                *string `json:"goals"`
+	Tasks                *string `json:"tasks"`
+	Results              *string `json:"results"`
+	Challenges           *string `json:"challenges"`
+	Location             *string `json:"location"`
+	VideoCover           *string `json:"video_cover"`
+	Safety               *string `json:"safety"`
+	Version              *string `json:"version"`
+}
+
 type ListApplicationsInDTO struct {
 	DeveloperID string `form:"developer_id" binding:"required"`
 }
 
 type ApplicationOutDTO struct {
-	ID                    string  `json:"id"`
-	DeveloperID           string  `json:"developer_id"`
-	CodeName              string  `json:"code_name"`
-	CategoryID            int64   `json:"category_id"`
-	AndroidPackageName    string  `json:"android_package_name"`
-	DefaultLocale         string  `json:"default_locale"`
-	WebVideo              string  `json:"web_video"`
-	InappVideo            string  `json:"inapp_video"`
-	WebBackgroundImage    string  `json:"web_background_image"`
-	InappBackgroundImage  *string `json:"inapp_background_image,omitempty"`
-	Name                  string  `json:"name"`
-	ShortTitle            string  `json:"short_title"`
-	Description           *string `json:"description,omitempty"`
-	Goals                 string  `json:"goals"`
-	Tasks                 string  `json:"tasks"`
-	Results               *string `json:"results,omitempty"`
-	Challenges            *string `json:"challenges,omitempty"`
-	Location              *string `json:"location,omitempty"`
-	VideoCover            *string `json:"video_cover,omitempty"`
-	Safety                *string `json:"safety,omitempty"`
-	ApkFilename           string  `json:"apk_filename"`
-	Version               string  `json:"version"`
-	VerificationProcessID *string `json:"verification_process_id,omitempty"`
-	VerificationStatus    *string `json:"verification_status,omitempty"`
-	Published             bool    `json:"published"`
+	ID                    string    `json:"id"`
+	DeveloperID           string    `json:"developer_id"`
+	CodeName              string    `json:"code_name"`
+	CategoryID            int64     `json:"category_id"`
+	AndroidPackageName    string    `json:"android_package_name"`
+	DefaultLocale         string    `json:"default_locale"`
+	WebVideo              string    `json:"web_video"`
+	InappVideo            string    `json:"inapp_video"`
+	WebBackgroundImage    string    `json:"web_background_image"`
+	InappBackgroundImage  *string   `json:"inapp_background_image,omitempty"`
+	Name                  string    `json:"name"`
+	ShortTitle            string    `json:"short_title"`
+	Description           *string   `json:"description,omitempty"`
+	Goals                 string    `json:"goals"`
+	Tasks                 string    `json:"tasks"`
+	Results               *string   `json:"results,omitempty"`
+	Challenges            *string   `json:"challenges,omitempty"`
+	Location              *string   `json:"location,omitempty"`
+	VideoCover            *string   `json:"video_cover,omitempty"`
+	Safety                *string   `json:"safety,omitempty"`
+	ApkFilename           string    `json:"apk_filename"`
+	Version               string    `json:"version"`
+	VerificationProcessID *string   `json:"verification_process_id,omitempty"`
+	VerificationStatus    *string   `json:"verification_status,omitempty"`
+	Published             bool      `json:"published"`
 	CreatedAt             time.Time `json:"created_at"`
 	UpdatedAt             time.Time `json:"updated_at"`
 }

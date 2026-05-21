@@ -274,6 +274,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "patch": {
+                "description": "Обновляет поля приложения. Передавать нужно только те поля, которые требуется изменить.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Обновить данные приложения",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID приложения",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Поля для обновления",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.UpdateApplicationInDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ApplicationOutDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ErrorResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ErrorResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/rest.ErrorResponseDTO"
+                        }
+                    }
+                }
             }
         },
         "/applications/{id}/publish": {
@@ -510,6 +567,68 @@ const docTemplate = `{
                 },
                 "size": {
                     "type": "integer"
+                }
+            }
+        },
+        "rest.UpdateApplicationInDTO": {
+            "type": "object",
+            "properties": {
+                "android_package_name": {
+                    "type": "string"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "challenges": {
+                    "type": "string"
+                },
+                "code_name": {
+                    "type": "string"
+                },
+                "default_locale": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "goals": {
+                    "type": "string"
+                },
+                "inapp_background_image": {
+                    "type": "string"
+                },
+                "inapp_video": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "results": {
+                    "type": "string"
+                },
+                "safety": {
+                    "type": "string"
+                },
+                "short_title": {
+                    "type": "string"
+                },
+                "tasks": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "video_cover": {
+                    "type": "string"
+                },
+                "web_background_image": {
+                    "type": "string"
+                },
+                "web_video": {
+                    "type": "string"
                 }
             }
         },

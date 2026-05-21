@@ -89,6 +89,82 @@ func (s *Service) ListApplications(ctx context.Context, developerID string, page
 	return list, nil
 }
 
+func (s *Service) UpdateApplication(ctx context.Context, id string, p UpdateApplicationParams) (developer_application.DeveloperApplication, error) {
+	app, err := s.repo.GetDeveloperApplication(ctx, uuid.MustParse(id))
+	if err != nil {
+		return developer_application.DeveloperApplication{}, err
+	}
+
+	applyString := func(dst *string, src *string) {
+		if src != nil {
+			*dst = *src
+		}
+	}
+	applyInt64 := func(dst *int64, src *int64) {
+		if src != nil {
+			*dst = *src
+		}
+	}
+
+	applyString(&app.CodeName, p.CodeName)
+	applyInt64(&app.CategoryID, p.CategoryID)
+	applyString(&app.AndroidPackageName, p.AndroidPackageName)
+	applyString(&app.DefaultLocale, p.DefaultLocale)
+	applyString(&app.WebVideo, p.WebVideo)
+	applyString(&app.InappVideo, p.InappVideo)
+	applyString(&app.WebBackgroundImage, p.WebBackgroundImage)
+	applyString(&app.Name, p.Name)
+	applyString(&app.ShortTitle, p.ShortTitle)
+	applyString(&app.Goals, p.Goals)
+	applyString(&app.Tasks, p.Tasks)
+	applyString(&app.Version, p.Version)
+
+	if p.InappBackgroundImage != nil {
+		app.InappBackgroundImage = nullString(*p.InappBackgroundImage)
+	}
+	if p.Description != nil {
+		app.Description = nullString(*p.Description)
+	}
+	if p.Results != nil {
+		app.Results = nullString(*p.Results)
+	}
+	if p.Challenges != nil {
+		app.Challenges = nullString(*p.Challenges)
+	}
+	if p.Location != nil {
+		app.Location = nullString(*p.Location)
+	}
+	if p.VideoCover != nil {
+		app.VideoCover = nullString(*p.VideoCover)
+	}
+	if p.Safety != nil {
+		app.Safety = nullString(*p.Safety)
+	}
+
+	return s.repo.UpdateDeveloperApplication(ctx, developer_application.UpdateDeveloperApplicationParams{
+		ID:                   app.ID,
+		CodeName:             app.CodeName,
+		CategoryID:           app.CategoryID,
+		AndroidPackageName:   app.AndroidPackageName,
+		DefaultLocale:        app.DefaultLocale,
+		WebVideo:             app.WebVideo,
+		InappVideo:           app.InappVideo,
+		WebBackgroundImage:   app.WebBackgroundImage,
+		InappBackgroundImage: app.InappBackgroundImage,
+		Name:                 app.Name,
+		ShortTitle:           app.ShortTitle,
+		Description:          app.Description,
+		Goals:                app.Goals,
+		Tasks:                app.Tasks,
+		Results:              app.Results,
+		Challenges:           app.Challenges,
+		Location:             app.Location,
+		VideoCover:           app.VideoCover,
+		Safety:               app.Safety,
+		Version:              app.Version,
+	})
+}
+
 func (s *Service) StartVerification(ctx context.Context, id string) (developer_application.DeveloperApplication, error) {
 	app, err := s.repo.GetDeveloperApplication(ctx, uuid.MustParse(id))
 	if err != nil {

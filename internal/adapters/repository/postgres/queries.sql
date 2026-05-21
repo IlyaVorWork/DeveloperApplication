@@ -39,3 +39,28 @@ UPDATE developer_applications
 SET published  = TRUE,
     updated_at = NOW()
 WHERE id = $1;
+
+-- name: UpdateDeveloperApplication :one
+UPDATE developer_applications
+SET code_name              = $2,
+    category_id            = $3,
+    android_package_name   = $4,
+    default_locale         = $5,
+    web_video              = $6,
+    inapp_video            = $7,
+    web_background_image   = $8,
+    inapp_background_image = $9,
+    name                   = $10,
+    short_title            = $11,
+    description            = $12,
+    goals                  = $13,
+    tasks                  = $14,
+    results                = $15,
+    challenges             = $16,
+    location               = $17,
+    video_cover            = $18,
+    safety                 = $19,
+    version                = $20,
+    updated_at             = NOW()
+WHERE id = $1
+RETURNING id, developer_id, code_name, category_id, android_package_name, default_locale, web_video, inapp_video, web_background_image, inapp_background_image, name, short_title, description, goals, tasks, results, challenges, location, video_cover, safety, apk_filename, version, verification_process_id, verification_status, published, created_at, updated_at;

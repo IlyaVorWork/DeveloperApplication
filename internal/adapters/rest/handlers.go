@@ -17,6 +17,7 @@ type Service interface {
 	UploadBuild(ctx context.Context, params service.UploadBuildParams) (developer_application.DeveloperApplication, error)
 	GetApplication(ctx context.Context, id string) (developer_application.DeveloperApplication, error)
 	ListApplications(ctx context.Context, developerID string, page, size int) ([]developer_application.DeveloperApplication, error)
+	UpdateApplication(ctx context.Context, id string, params service.UpdateApplicationParams) (developer_application.DeveloperApplication, error)
 	StartVerification(ctx context.Context, id string) (developer_application.DeveloperApplication, error)
 	GetVerificationStatus(ctx context.Context, id string) (string, error)
 	PublishApplication(ctx context.Context, id string) error
@@ -125,6 +126,61 @@ func (h *Handler) GetApplication(c *gin.Context) {
 	}
 
 	app, err := h.service.GetApplication(c.Request.Context(), id)
+	if err != nil {
+		writeError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, toApplicationOutDTO(app))
+}
+
+// UpdateApplication godoc
+// @Summary Обновить данные приложения
+// @Description Обновляет поля приложения. Передавать нужно только те поля, которые требуется изменить.
+// @Tags applications
+// @Accept json
+// @Produce json
+// @Param id   path     string               true "ID приложения"
+// @Param body body     UpdateApplicationInDTO true "Поля для обновления"
+// @Success 200 {object} ApplicationOutDTO
+// @Failure 400 {object} ErrorResponseDTO
+// @Failure 404 {object} ErrorResponseDTO
+// @Failure 500 {object} ErrorResponseDTO
+// @Router /applications/{id} [patch]
+func (h *Handler) UpdateApplication(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		return
+	}
+
+	var body UpdateApplicationInDTO
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	app, err := h.service.UpdateApplication(c.Request.Context(), id, service.UpdateApplicationParams{
+		CodeName:             body.CodeName,
+		CategoryID:           body.CategoryID,
+		AndroidPackageName:   body.AndroidPackageName,
+		DefaultLocale:        body.DefaultLocale,
+		WebVideo:             body.WebVideo,
+		InappVideo:           body.InappVideo,
+		WebBackgroundImage:   body.WebBackgroundImage,
+		InappBackgroundImage: body.InappBackgroundImage,
+		Name:                 body.Name,
+		ShortTitle:           body.ShortTitle,
+		Description:          body.Description,
+		Goals:                body.Goals,
+		Tasks:                body.Tasks,
+		Results:              body.Results,
+		Challenges:           body.Challenges,
+		Location:             body.Location,
+		VideoCover:           body.VideoCover,
+		Safety:               body.Safety,
+		Version:              body.Version,
+	})
 	if err != nil {
 		writeError(c, err)
 		return
