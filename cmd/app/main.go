@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strings"
 
 	rkboot "github.com/rookie-ninja/rk-boot/v2"
 	rkpostgres "github.com/rookie-ninja/rk-db/postgres"
@@ -11,6 +12,7 @@ import (
 
 	app_client "developerApplication/internal/adapters/grpc/application_service"
 	av_client "developerApplication/internal/adapters/grpc/auto_verification"
+	devkafka "developerApplication/internal/adapters/kafka"
 	"developerApplication/internal/adapters/repository/postgres/developer_application"
 	resthandlers "developerApplication/internal/adapters/rest"
 	"developerApplication/internal/adapters/s3"
@@ -74,6 +76,24 @@ func main() {
 	gin.Router.POST("/applications/:id/verify", handler.StartVerification)
 	gin.Router.GET("/applications/:id/verify", handler.GetVerificationStatus)
 	gin.Router.POST("/applications/:id/publish", handler.PublishApplication)
+
+	// Kafka consumer: listen for verification.completed events
+	kafkaBroker := getEnv("KAFKA_BROKER", "kafka:9092")
+	verificationConsumer := devkafka.NewConsumer(devkafka.ConsumerConfig{
+		Brokers: strings.Split(kafkaBroker, ","),
+		GroupID: "developer-application-verification",
+		Topic:   "verification.completed",
+	}, devkafka.NewVerificationCompletedHandler(repository))
+	defer verificationConsumer.Close()
+
+	consumerCtx, cancelConsumer := context.WithCancel(context.Background())
+	defer cancelConsumer()
+	go func() {
+		log.Println("starting verification.completed consumer")
+		if err := verificationConsumer.Run(consumerCtx); err != nil && err != context.Canceled {
+			log.Printf("verification consumer stopped: %v", err)
+		}
+	}()
 
 	boot.WaitForShutdownSig(context.TODO())
 }
