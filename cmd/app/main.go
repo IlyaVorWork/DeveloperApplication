@@ -84,14 +84,12 @@ func main() {
 		GroupID: "developer-application-verification",
 		Topic:   "verification.completed",
 	}, devkafka.NewVerificationCompletedHandler(repository))
-	defer verificationConsumer.Close()
 
 	consumerCtx, cancelConsumer := context.WithCancel(context.Background())
 	defer cancelConsumer()
 	go func() {
-		log.Println("starting verification.completed consumer")
 		if err := verificationConsumer.Run(consumerCtx); err != nil && err != context.Canceled {
-			log.Printf("verification consumer stopped: %v", err)
+			log.Printf("verification consumer exited: %v", err)
 		}
 	}()
 

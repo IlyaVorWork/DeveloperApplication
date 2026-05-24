@@ -210,7 +210,7 @@ func (s *Service) PublishApplication(ctx context.Context, id string) error {
 		return err
 	}
 
-	if !app.VerificationProcessID.Valid || app.VerificationStatus.String != "human.verify.succeeded" {
+	if !app.VerificationProcessID.Valid || app.VerificationStatus.String != "completed" {
 		return ErrNotVerified
 	}
 
