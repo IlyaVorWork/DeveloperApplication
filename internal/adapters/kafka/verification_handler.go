@@ -18,6 +18,7 @@ type VerificationEvent struct {
 	CorrelationID string    `json:"CorrelationID"`
 	Type          string    `json:"Type"`
 	FileName      string    `json:"FileName"`
+	FailedStep    string    `json:"FailedStep,omitempty"`
 	Timestamp     time.Time `json:"Timestamp"`
 }
 
@@ -47,8 +48,9 @@ func NewVerificationCompletedHandler(repo VerificationStatusUpdater) Handler {
 		}
 
 		if err := repo.UpdateVerificationStatus(ctx, developer_application.UpdateVerificationStatusParams{
-			VerificationProcessID: uuid.NullUUID{UUID: processUUID, Valid: true},
-			VerificationStatus:    sql.NullString{String: status, Valid: true},
+			VerificationProcessID:  uuid.NullUUID{UUID: processUUID, Valid: true},
+			VerificationStatus:     sql.NullString{String: status, Valid: true},
+			VerificationFailedStep: sql.NullString{String: event.FailedStep, Valid: event.FailedStep != ""},
 		}); err != nil {
 			log.Printf("verification.completed: failed to update status for process %s: %v", event.CorrelationID, err)
 			return err

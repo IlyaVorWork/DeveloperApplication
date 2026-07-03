@@ -182,26 +182,21 @@ func (s *Service) StartVerification(ctx context.Context, id string) (developer_a
 	})
 }
 
-func (s *Service) GetVerificationStatus(ctx context.Context, id string) (string, error) {
+func (s *Service) GetVerificationStatus(ctx context.Context, id string) (string, *string, error) {
 	app, err := s.repo.GetDeveloperApplication(ctx, uuid.MustParse(id))
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	if !app.VerificationProcessID.Valid {
-		return "not_started", nil
+		return "not_started", nil, nil
 	}
 
-	processes, err := s.verifier.GetVerification(ctx, app.VerificationProcessID.UUID.String())
-	if err != nil {
-		return "", fmt.Errorf("get verification: %w", err)
+	if !app.VerificationStatus.Valid || app.VerificationStatus.String == "" {
+		return "pending", nil, nil
 	}
 
-	if len(processes) == 0 {
-		return app.VerificationStatus.String, nil
-	}
-
-	return processes[0].Status, nil
+	return app.VerificationStatus.String, &app.VerificationFailedStep.String, nil
 }
 
 func (s *Service) PublishApplication(ctx context.Context, id string) error {

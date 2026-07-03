@@ -19,7 +19,7 @@ type Service interface {
 	ListApplications(ctx context.Context, developerID string, page, size int) ([]developer_application.DeveloperApplication, error)
 	UpdateApplication(ctx context.Context, id string, params service.UpdateApplicationParams) (developer_application.DeveloperApplication, error)
 	StartVerification(ctx context.Context, id string) (developer_application.DeveloperApplication, error)
-	GetVerificationStatus(ctx context.Context, id string) (string, error)
+	GetVerificationStatus(ctx context.Context, id string) (string, *string, error)
 	PublishApplication(ctx context.Context, id string) error
 }
 
@@ -273,13 +273,16 @@ func (h *Handler) GetVerificationStatus(c *gin.Context) {
 		return
 	}
 
-	status, err := h.service.GetVerificationStatus(c.Request.Context(), id)
+	status, failedStep, err := h.service.GetVerificationStatus(c.Request.Context(), id)
 	if err != nil {
 		writeError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, VerificationStatusOutDTO{Status: status})
+	c.JSON(http.StatusOK, VerificationStatusOutDTO{
+		Status:     status,
+		FailedStep: failedStep,
+	})
 }
 
 // PublishApplication godoc

@@ -91,7 +91,8 @@ type ListApplicationsOutDTO struct {
 }
 
 type VerificationStatusOutDTO struct {
-	Status string `json:"status"`
+	Status     string  `json:"status"`
+	FailedStep *string `json:"failed_step,omitempty"`
 }
 
 type ErrorResponseDTO struct {
